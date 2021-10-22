@@ -1,11 +1,12 @@
 import sqlite3
-from flask import Flask
+from flask import Flask,url_for,redirect
+from flask import render_template
 from flask import jsonify, request
 conn = sqlite3.connect('mydatabase.db', check_same_thread=False)
 #configurar de la app
 app = Flask(__name__)
 cursorObj = conn.cursor()
-@app.route('/',methods=['POST'])
+@app.route('/login',methods=['POST'])
 def login():
     conn = sqlite3.connect('mydatabase.db', check_same_thread=False)
     content = request.get_json()
@@ -48,8 +49,9 @@ def registerUsers():
     sql_table(conn)
     inssert(conn,email,type,name,password,status)
     return jsonify({"datos":True}),200
-@app.route('/registerUsers',methods=['POST'])
-
+@app.route('/')
+def view():
+    return render_template('index.html')
 
 def sql_table(conn):
     try:
@@ -68,6 +70,7 @@ def inssert(conn,email,type,name,password,status):
 def innsertPublicidad(conn,information):    
     cursorObj.execute('''INSERT INTO  public(nombre,decription,valor,ubication) VALUES(?,?,?,?,?)''',information)
     conn.commit()
+
 
 if __name__=="__main__":
     app.run(port=1406,debug=True,host='0.0.0.0')
